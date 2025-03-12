@@ -5,37 +5,39 @@ import requests
 
 app = Flask(__name__)
 
-saved_url = None  # Store the entered URL
+saved_urls = []  # Store multiple URLs
 
 def send_requests():
-    """Function to send requests to the saved URL and itself every 14 minutes."""
-    global saved_url
+    """Function to send requests to all saved URLs and itself every 14 minutes."""
     while True:
-        if saved_url:
+        for url in saved_urls:
             try:
-                requests.get(saved_url, timeout=5)
-                print(f"Requested: {saved_url}")
+                requests.get(url, timeout=5)
+                print(f"Requested: {url}")
             except Exception as e:
-                print(f"Error requesting {saved_url}: {e}")
+                print(f"Error requesting {url}: {e}")
 
-            try:
-                requests.get("http://127.0.0.1:5000", timeout=5)
-                print("Requested: Flask server itself")
-            except Exception as e:
-                print(f"Error requesting itself: {e}")
+        # Self-request using Render's public URL
+        self_url = "https://render-bot-ewv3.onrender.com"
+        try:
+            requests.get(self_url, timeout=5)
+            print(f"Requested: {self_url} (self-request)")
+        except Exception as e:
+            print(f"Error requesting itself: {e}")
 
         time.sleep(14 * 60)  # Wait for 14 minutes
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global saved_url
+    global saved_urls
     if request.method == "POST":
-        saved_url = request.form.get("url")
-        return jsonify({"message": "URL saved!", "url": saved_url})
-    return render_template("index.html", url=saved_url)
+        url = request.form.get("url")
+        if url and url not in saved_urls:
+            saved_urls.append(url)
+        return jsonify({"message": "URL saved!", "urls": saved_urls})
+    return render_template("index.html", urls=saved_urls)
 
 if __name__ == "__main__":
-    # Start the background thread for sending requests
     thread = threading.Thread(target=send_requests, daemon=True)
     thread.start()
 

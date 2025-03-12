@@ -19,21 +19,31 @@
     </form>
     <p id="status"></p>
 
-    <script>
-        document.getElementById("urlForm").onsubmit = async function(event) {
-            event.preventDefault();
-            let url = document.getElementById("urlInput").value;
-            if (!url) { alert("Please enter a valid URL."); return; }
-            
-            let response = await fetch("/", {
-                method: "POST",
-                body: new URLSearchParams({ url: url }),
-                headers: { "Content-Type": "application/x-www-form-urlencoded" }
-            });
+   <p>Currently saved URLs:</p>
+<ul id="urlList"></ul>
 
-            let data = await response.json();
-            document.getElementById("status").innerText = "Requests started for: " + data.url;
-        };
-    </script>
+<script>
+    document.getElementById("urlForm").onsubmit = async function(event) {
+        event.preventDefault();
+        let url = document.getElementById("urlInput").value;
+        if (!url) { alert("Please enter a valid URL."); return; }
+
+        let response = await fetch("/", {
+            method: "POST",
+            body: new URLSearchParams({ url: url }),
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+
+        let data = await response.json();
+        let urlList = document.getElementById("urlList");
+        urlList.innerHTML = "";  // Clear list
+        data.urls.forEach(u => {
+            let li = document.createElement("li");
+            li.innerText = u;
+            urlList.appendChild(li);
+        });
+    };
+</script>
+
 </body>
 </html>
