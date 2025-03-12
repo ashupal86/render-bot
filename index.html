@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Request Maker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        p {
+            font-size: 14px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Enter a URL to Auto Request</h2>
+    <input type="text" id="urlInput" placeholder="Enter URL...">
+    <button onclick="startRequests()">Start</button>
+    <p id="status"></p>
+
+    <script>
+        let savedUrl = "";
+
+        function startRequests() {
+            const url = document.getElementById("urlInput").value;
+            if (!url) {
+                alert("Please enter a valid URL.");
+                return;
+            }
+            savedUrl = url;
+            document.getElementById("status").innerText = `Requests started for: ${savedUrl}`;
+
+            // Function to send request
+            function sendRequest(targetUrl) {
+                fetch(targetUrl, { method: "GET", mode: "no-cors" })
+                    .then(() => console.log(`Requested: ${targetUrl}`))
+                    .catch(err => console.error(`Error requesting ${targetUrl}:`, err));
+            }
+
+            // Initial request
+            sendRequest(savedUrl);
+            sendRequest(window.location.href);
+
+            // Set interval to repeat every 14 minutes (14 * 60 * 1000 ms)
+            setInterval(() => {
+                sendRequest(savedUrl);
+                sendRequest(window.location.href);
+            }, 14 * 60 * 1000);
+        }
+    </script>
+
+</body>
+</html>
