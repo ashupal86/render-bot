@@ -9,7 +9,7 @@ app = Flask(__name__)
 DB_FILE = "urls.db"
 
 def init_db():
-    """Initialize the database and create table if it doesn't exist."""
+    # """Initialize the database and create table if it doesn't exist."""
     with sqlite3.connect(DB_FILE) as conn:
         cursor = conn.cursor()
         cursor.execute("""
@@ -22,7 +22,7 @@ def init_db():
         conn.commit()
 
 def get_saved_urls():
-    """Retrieve all stored URLs from the database."""
+    # """Retrieve all stored URLs from the database."""
     with sqlite3.connect(DB_FILE) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT url FROM urls")
