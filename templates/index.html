@@ -5,22 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Auto Request Maker</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
-        input { padding: 10px; width: 300px; margin-bottom: 10px; }
-        button { padding: 10px 20px; cursor: pointer; }
-        p { font-size: 14px; color: green; }
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 400px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 90%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            outline: none;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        button {
+            background: #ff6600;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        button:hover {
+            background: #e65c00;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #0f0;
+        }
+
+        .url-list {
+            margin-top: 20px;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .url-list li {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
+            word-wrap: break-word;
+            transition: 0.3s ease;
+        }
+
+        .url-list li:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
     </style>
 </head>
 <body>
-    <h2>Enter a URL to Auto Request</h2>
+
+<div class="container">
+    <h2>Auto Request Maker</h2>
     <form id="urlForm">
         <input type="text" id="urlInput" name="url" placeholder="Enter URL..." required>
         <button type="submit">Start</button>
     </form>
     <p id="status"></p>
 
-   <p>Currently saved URLs:</p>
-<ul id="urlList"></ul>
+    <h3>Saved URLs:</h3>
+    <ul class="url-list" id="urlList">
+        {%- for url in urls %}
+            <li>{{ url }}</li>
+        {%- endfor %}
+    </ul>
+</div>
 
 <script>
     document.getElementById("urlForm").onsubmit = async function(event) {
@@ -35,13 +114,13 @@
         });
 
         let data = await response.json();
+        document.getElementById("status").innerText = data.message;
+
+        // Update URL list dynamically
         let urlList = document.getElementById("urlList");
-        urlList.innerHTML = "";  // Clear list
-        data.urls.forEach(u => {
-            let li = document.createElement("li");
-            li.innerText = u;
-            urlList.appendChild(li);
-        });
+        let newItem = document.createElement("li");
+        newItem.textContent = url;
+        urlList.appendChild(newItem);
     };
 </script>
 

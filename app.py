@@ -64,6 +64,7 @@ def home():
         if url:
             save_url(url)
         return jsonify({"message": "URL saved!", "urls": get_saved_urls()})
+    print(get_saved_urls())
     return render_template("index.html", urls=get_saved_urls())
 
 if __name__ == "__main__":
